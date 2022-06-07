@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package management</title>
+  <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+  <nav id="navbar">
+    <header>Package management</header>
+    <ul>
+      <li><a class="nav-link" href="#A_dependency_in_your_project">A dependency in your project</a></li>
+      <li><a class="nav-link" href="#What_exactly_is_a_package_manager?">What exactly is a package manager?</a></li>
+      <li><a class="nav-link" href="#Package_registries">Package registries</a></li>
+      <li><a class="nav-link" href="#Using_the_package_ecosystem">Using the package ecosystem</a></li>
+      <li><a class="nav-link" href="#Reference">Reference</a></li>
+    </ul>
+  </nav>
+  <main id="main-doc">
+    <section class="main-section" id="A_dependency_in_your_project">
+      <header>A dependency in your project</header>
+      <p>A dependency is a third-party bit of software that was probably written by someone else and ideally solves a
+        single problem for you. A web project can have any number of dependencies, ranging from none to many, and your
+        dependencies might include sub-dependencies that you didn't explicitly install — your dependencies may have
+        their own dependencies.</p>
+      <p>A simple example of a useful dependency that your project might need is some code to calculate relative dates
+        as human-readable text. You could certainly code this yourself, but there's a strong chance that someone else
+        has already solved this problem — why waste time reinventing the wheel? Moreover, a reliable third-party
+        dependency will likely have been tested in a lot of different situations, making it more robust and
+        cross-browser compatible than your own solution.</p>
+      <p>A project dependency can be an entire JavaScript library or framework — such as React or Vue — or a very small
+        utility like our human-readable date library, or it can be a command line tool such as Prettier or ESLint, which
+        we talked about in previous articles.</p>
+      <p>Without modern build tools, dependencies like this might be included in your project using a simple
+        <code>&lt;script&gt;</code> element, but this might not work right out of the box and you will likely need some
+        modern tooling to bundle your code and dependencies together when they are released on the web. A bundle is the
+        term that's generally used to refer to a single file on your web server that contains all the JavaScript for
+        your software — typically compressed as much as possible to help reduce the time it takes to get your software
+        downloaded and displayed in your visitors' browser.</p>
+      <p>In addition, what happens if you find a better tool that you want to use instead of the current one, or a new
+        version of your dependency is released that you want to update to? This is not too painful for a couple of
+        dependencies, but in larger projects with many dependencies this kind of thing can become really challenging to
+        keep track of. It makes more sense to use a package manager such as npm, as this will guarantee that the code is
+        added and removed cleanly, as well as a host of other advantages.</p>
+    </section>
+    <section class="main-section" id="What_exactly_is_a_package_manager?">
+      <header>What exactly is a package manager?</header>
+      <p>We've met npm already, but stepping back from npm itself, a package manager is a system that will manage your
+        project dependencies.</p>
+      <p>The package manager will provide a method to install new dependencies (also referred to as "packages"), manage
+        where packages are stored on your file system, and offer capabilities for you to publish your own packages.</p>
+      <p>In theory you may not need a package manager and you could manually download and store your project
+        dependencies, but a package manager will seamlessly handle installing and uninstalling packages. If you didn't
+        use one, you'd have to manually handle:</p>
+      <ul>
+        <li>Finding all the correct package JavaScript files.</li>
+        <li>Checking them to make sure they don't have any known vulnerabilities.</li>
+        <li>Downloading them and putting them in the correct locations in your project.</li>
+        <li>Writing the code to include the package(s) in your application (this tends to be done using JavaScript
+          modules, another subject that is worth reading up on and understanding).</li>
+        <li>Doing the same thing for all of the packages' sub-dependencies, of which there could be tens, or hundreds.
+        </li>
+        <li>Removing all the files again if you want to remove the packages.</li>
+      </ul>
+      <p>In addition, package managers handle duplicate dependencies (something that becomes important and common in
+        front-end development).</p>
+      <p>In the case of npm (and JavaScript- and Node-based package managers) you have two options for where you install
+        your dependencies. As we touched on in the previous article, dependencies can be installed globally or locally
+        to your project. Although there tend to be more pros for installing globally, the pros for installing locally
+        are more important — such as code portability and version locking.</p>
+      <p>For example, if your project relied on Webpack with a certain configuration, you'd want to ensure that if you
+        installed that project on another machine or returned to it much later on, the configuration would still work.
+        If a different version of Webpack was installed, it may not be compatible. To mitigate this, dependencies are
+        installed locally to a project.</p>
+      <p>To see local dependencies really shine, all you need to do is try to download and run an existing project — if
+        it works and all the dependencies work right out of the box, then you have local dependencies to thank for the
+        fact that the code is portable.</p>
+    </section>
+    <section class="main-section" id="Package_registries">
+      <header>Package registries</header>
+      <p>For a package manager to work, it needs to know where to install packages from, and this comes in the form of a
+        package registry. The registry is a central place that a package is published to and thus can be installed from.
+        npm, as well as being a package manager, is also the name of the most commonly-used package registry for
+        JavaScript packages. The npm registry exists at npmjs.com.</p>
+      <p>npm is not the only option. You could manage your own package registry — products like Microsoft Azure allow
+        you to create proxies to the npm registry (so you can override or lock certain packages), GitHub also offers a
+        package registry service, and there will be likely more options appearing as time goes on.</p>
+      <p>What is important is that you ensure you've chosen the best registry for you. Many projects will use npm, and
+        we'll stick to this in our examples throughout the rest of the module.</p>
+    </section>
+    <section class="main-section" id="Using_the_package_ecosystem">
+      <header>Using the package ecosystem</header>
+      <p>Using the package ecosystem
+        Let's run through an example to get you started with using a package manager and registry to install a command
+        line utility.</p>
+      <p>Parcel is another tool that developers commonly use in their development process. Parcel is clever in that it
+        can watch the contents of our code for calls to dependencies and automatically installs any dependencies it sees
+        that our code needs. It can also automatically build our code.</p>
+      <p>In our previous chapter we installed Prettier as a global tool. Here however, let's use npm to install Parcel
+        as a local tool, as best practices dictate. We'll install it as part of an experimental app.</p>
+      <h1>Setting up the app as an npm package</h1>
+      <p>First of all, create a new directory to store our experimental app in, somewhere sensible that you'll find
+        again. We'll call it parcel-experiment, but you can call it whatever you like:</p>
+      <pre class="brush: bash notranslate"><code><span class="token function">mkdir</span> parcel-experiment
+<span class="token builtin class-name">cd</span> parcel-experiment
+</code></pre>
+      <p>Next, let's initialise our app as an npm package, which creates a config file — package.json — that allows us
+        to save our configuration details in case we want to recreate this environment later on, or even publish the
+        package to the npm registry (although this is somewhat beyond the scope of this article).</p>
+      <p>Type the following command, making sure you are inside the parcel-experiment directory:</p>
+      <pre class="brush: bash notranslate"><code><span class="token function">npm</span> init
+</code></pre>
+      <p>You will now be asked some questions; npm will then create a default package.json file based on the answers:
+      </p>
+      <ul>
+        <li>
+          <code>name</code>: A name to identify the app. Just press
+          <code>Return</code>
+          to accept the default <code>parcel-experiment</code>.
+        </li>
+        <li>
+          <code>version</code>: The starting version number for the app. Again, just press
+          <code>Return</code>
+          to accept the default <code>1.0.0</code>.
+        </li>
+        <li>
+          <code>description</code>: A quick description of the app's purpose. Type in something really simple, like "A
+          simple npm package to learn about using npm", then press
+          <code>Return</code>
+          .
+        </li>
+        <li>
+          <code>entry point</code>: This will be the top-level JavaScript file of the app. The default
+          <code>index.js</code> is fine for now press
+          <code>Return</code>
+          .
+        </li>
+        <li>
+          <code>test command</code>, <code>git repository</code>, and <code>keywords</code>: press
+          <code>Return</code>
+          to leave each of these blank for now.
+        </li>
+        <li>
+          <code>author</code>: The author of the project. Type your own name, and press
+          <code>Return</code>
+          .
+        </li>
+        <li>
+          <code>license</code>: The license to publish the package under. Press
+          <code>Return</code>
+          to accept the default for now.
+        </li>
+      </ul>
+    </section>
+    <section class="main-section" id="Reference">
+      <header>Reference</header>
+      <p> All the documentation in this page is taken from
+        <a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Package_management#a_dependency_in_your_project"
+          target="_blank">MDN</a>
+      </p>
+    </section>
+  </main>
+</body>
+</html>
